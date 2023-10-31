@@ -1,5 +1,6 @@
 package com.blog.app.blog.service.implementation;
 
+import com.blog.app.blog.entity.Post;
 import com.blog.app.blog.payload.PostDto;
 import com.blog.app.blog.repository.PostRepository;
 import com.blog.app.blog.service.PostService;
@@ -25,6 +26,17 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PostDto createPost(PostDto postDto) {
-        return null;
+        Post post=mapToEntity(postDto);
+        Post newPost=postRepository.save(post);
+        return mapToDto(newPost);
+    }
+
+    private Post mapToEntity(PostDto postDto){
+        Post post=modelMapper.map(postDto,Post.class);
+        return post;
+    }
+    private PostDto mapToDto(Post post){
+        PostDto postDto=modelMapper.map(post,PostDto.class);
+        return postDto;
     }
 }
