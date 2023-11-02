@@ -10,5 +10,6 @@ public interface PostService {
     PostResponse getAllPost(int pageNumber, int pagesize);
     PostDto getPostById(long id);
     PostDto updatePost(long id,PostDto postDto);
+    void deletePost(long id);
 
 }
