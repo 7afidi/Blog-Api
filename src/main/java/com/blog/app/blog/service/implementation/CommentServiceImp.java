@@ -2,6 +2,7 @@ package com.blog.app.blog.service.implementation;
 
 import com.blog.app.blog.entity.Comment;
 import com.blog.app.blog.entity.Post;
+import com.blog.app.blog.exception.BlogApiException;
 import com.blog.app.blog.exception.ResourceNotFoundException;
 import com.blog.app.blog.payload.CommentDto;
 import com.blog.app.blog.repository.CommentRepository;
@@ -9,6 +10,7 @@ import com.blog.app.blog.repository.PostRepository;
 import com.blog.app.blog.service.CommentService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -42,5 +44,15 @@ public class CommentServiceImp implements CommentService {
     public List<CommentDto> getCommentsByPostId(long postId) {
         List<Comment> comments=commentRepository.findByPostId(postId);
         return comments.stream().map((comment -> modelMapper.map(comment,CommentDto.class))).collect(Collectors.toList());
+    }
+
+    @Override
+    public CommentDto getCommentById(Long postId, Long id) {
+        Post post=  postRepository.findById(postId).orElseThrow(()->new ResourceNotFoundException("Post","id",postId));
+        Comment comment=commentRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("comment","id",id));
+        if (!comment.getPost().getId().equals(post.getId())){
+            throw new BlogApiException(HttpStatus.BAD_REQUEST,"Comment does not belog to post");
+        }
+        return modelMapper.map(comment,CommentDto.class);
     }
 }
