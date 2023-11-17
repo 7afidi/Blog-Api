@@ -55,4 +55,24 @@ public class CommentServiceImp implements CommentService {
         }
         return modelMapper.map(comment,CommentDto.class);
     }
+
+    @Override
+    public CommentDto updateComment(Long postId, Long commentId, CommentDto commentDto) {
+        Post post=  postRepository.findById(postId).orElseThrow(()->new ResourceNotFoundException("Post","id",postId));
+        Comment comment=commentRepository.findById(commentId).orElseThrow(()->new ResourceNotFoundException("comment","id",commentId));
+
+        if (!comment.getPost().getId().equals(post.getId())){
+            throw new BlogApiException(HttpStatus.BAD_REQUEST,"Comment does not belog to post");
+        }
+        comment.setName(commentDto.getName());
+        comment.setBody(commentDto.getBody());
+        comment.setEmail(commentDto.getEmail());
+        Comment updatedComment =commentRepository.save(comment);
+
+        return modelMapper.map(updatedComment,CommentDto.class);
+
+
+    }
+
+
 }
