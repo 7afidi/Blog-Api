@@ -74,5 +74,20 @@ public class CommentServiceImp implements CommentService {
 
     }
 
+    @Override
+    public void deleteComment(Long postId, Long commentId) {
+        Post post=  postRepository.findById(postId).orElseThrow(()->new ResourceNotFoundException("Post","id",postId));
+        Comment comment=commentRepository.findById(commentId).orElseThrow(()->new ResourceNotFoundException("comment","id",commentId));
+
+        if (!comment.getPost().getId().equals(post.getId())){
+            throw new BlogApiException(HttpStatus.BAD_REQUEST,"Comment does not belog to post");
+        }
+
+        commentRepository.delete(comment);
+
+    }
+
+
+
 
 }
