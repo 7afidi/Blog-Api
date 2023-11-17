@@ -11,6 +11,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class CommentServiceImp implements CommentService {
     private CommentRepository commentRepository;
@@ -33,5 +36,11 @@ public class CommentServiceImp implements CommentService {
         comment.setPost(post);
         Comment newComment = commentRepository.save(comment);
         return modelMapper.map(newComment,CommentDto.class);
+    }
+
+    @Override
+    public List<CommentDto> getCommentsByPostId(long postId) {
+        List<Comment> comments=commentRepository.findByPostId(postId);
+        return comments.stream().map((comment -> modelMapper.map(comment,CommentDto.class))).collect(Collectors.toList());
     }
 }
