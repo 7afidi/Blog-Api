@@ -1,12 +1,12 @@
 package com.blog.app.blog.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 
@@ -21,6 +21,7 @@ public class Comment {
     private String body;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonBackReference
     @JoinColumn(name = "post_id",nullable = false)
     private Post post;
 

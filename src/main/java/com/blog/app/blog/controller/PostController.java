@@ -7,6 +7,7 @@ import com.blog.app.blog.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,14 +23,14 @@ public class PostController {
         this.postService = postService;
     }
 
-
+@PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity createPost (@RequestBody PostDto postDto){
         return new ResponseEntity<>(postService.createPost(postDto), HttpStatus.CREATED);
     }
 
     @GetMapping
-    public PostResponse getAllPosts(@RequestParam (value = "pageN",defaultValue = "10",required = false) int pageNumber,
+    public PostResponse getAllPosts(@RequestParam (value = "pageN",defaultValue = "0",required = false) int pageNumber,
                                     @RequestParam(value = "pageSize",defaultValue = "10",required = false) int pageSize,
                                     @RequestParam(value = "sortBy",defaultValue = "id",required = false)String sortBy,
                                     @RequestParam(value = "sortdir",defaultValue = "asc",required = false)String sortDir){
@@ -40,12 +41,13 @@ public class PostController {
     public ResponseEntity getPostById(@PathVariable("id") long postId){
         return ResponseEntity.ok((postService.getPostById(postId)));
     }
+    @PreAuthorize("hasRole('ADMIN')")
 
     @PutMapping("/{id}")
     public ResponseEntity updatePost(@PathVariable("id") long postId,@RequestBody PostDto postDto){
         return ResponseEntity.ok(postService.updatePost(postId,postDto));
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity deletePost(@PathVariable("id") long postId){
         postService.deletePost(postId);
